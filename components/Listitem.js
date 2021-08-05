@@ -8,28 +8,32 @@ const ListItem = ({
   currentPrice,
   priceChangePercentage7d,
   logoUrl,
+  onPress,
 }) => {
+  const priceColor = priceChangePercentage7d > 0 ? "green" : "red";
+
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <View style={styles.itemWrapper}>
         {/** This is the Lft side */}
 
         <View style={styles.leftSide}>
-          <Image
-            source={require("../assets/image/eth.png")}
-            style={styles.image}
-          />
+          <Image source={{ url: logoUrl }} style={styles.image} />
           {/*TODO: make dynamic */}
           <View style={styles.tittleWrapper}>
-            <Text style={styles.title}>Ethereum</Text>
-            <Text style={styles.subtitle}>ETH</Text>
+            <Text style={styles.title}>{name}</Text>
+            <Text style={styles.subtitle}>{symbol.toUpperCase()}</Text>
           </View>
         </View>
 
         {/** This is the Right side */}
         <View style={styles.rightSide}>
-          <Text style={styles.title}>Ethereum</Text>
-          <Text style={(styles.subtitle, { color: "red" })}>ETH</Text>
+          <Text style={styles.title}>
+            ${currentPrice.toLocaleString("en-US", { currency: "USD" })}
+          </Text>
+          <Text style={(styles.subtitle, { color: priceColor })}>
+            %{priceChangePercentage7d.toFixed(2)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

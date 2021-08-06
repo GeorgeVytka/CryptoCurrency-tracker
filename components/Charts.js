@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import {
   ChartDot,
@@ -21,6 +21,14 @@ const Chart = ({
 }) => {
   const priceColor = priceChangePercentage7d > 0 ? "green" : "red";
 
+  //fix the render issue with chart
+  const [chartReady, setChartReady] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setChartReady(true);
+    }, 3);
+  }, []);
   {
     /*included in the rainbow doc */
   }
@@ -63,11 +71,16 @@ const Chart = ({
               %{priceChangePercentage7d.toFixed(2)}
             </Text>
           </View>
+
+          <View style={styles.divder}></View>
         </View>
-        <View>
-          <ChartPath height={SIZE / 2} stroke="black" width={SIZE} />
-          <ChartDot style={{ backgroundColor: "blue" }} />
-        </View>
+
+        {chartReady ? (
+          <View>
+            <ChartPath height={SIZE / 2} stroke="black" width={SIZE} />
+            <ChartDot style={{ backgroundColor: "blue" }} />
+          </View>
+        ) : null}
       </View>
     </ChartPathProvider>
   );
@@ -79,6 +92,12 @@ const styles = StyleSheet.create({
   },
   titlesWrapper: {
     marginHorizontal: 17,
+  },
+  divder: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "black",
+
+    marginTop: 17,
   },
   upperTitles: {
     flexDirection: "row",

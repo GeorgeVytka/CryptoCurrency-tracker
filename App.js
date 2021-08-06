@@ -1,6 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useRef, useMemo, useState } from "react";
-import { StyleSheet, Text, View, FlatList, SafeAreaView } from "react-native";
+import React, { useRef, useMemo, useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+  ImageBackground,
+  Button,
+} from "react-native";
+import "react-native-gesture-handler";
 import Listitem from "./components/Listitem";
 import { SAMPLE_DATA } from "./assets/data/sampleData";
 import ListItem from "./components/Listitem";
@@ -9,8 +18,21 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
+import { getMarketData } from "./api/geckoApi";
+import svg from "./assets/image/Abstract-Timekeeper.svg";
 
 export default function App() {
+  //data from the api
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const FetchData = async () => {
+      const marketData = await getMarketData();
+      setData(marketData);
+    };
+    FetchData();
+  }, []);
+
   const [selctedCoin, setSelectedCoin] = useState(null);
 
   const bottomSheetModalRef = useRef(null);
@@ -25,30 +47,37 @@ export default function App() {
   return (
     <BottomSheetModalProvider>
       <SafeAreaView style={styles.container}>
-        <View style={styles.titleWrapper}>
-          <Text style={styles.largeTitle}>Crypto Markets</Text>
-        </View>
+        <ImageBackground
+          source={svg}
+          resizeMode="cover"
+          style={styles.imageBack}
+        >
+          <View style={styles.titleWrapper}>
+            <Text style={styles.largeTitle}>Crypto Markets</Text>
+            <Button title={"+"}></Button>
+          </View>
 
-        <View style={styles.divder}></View>
+          <View style={styles.divder}></View>
 
-        {/* List the crypto */}
+          {/* List the crypto */}
 
-        <FlatList
-          keyExtractor={(item) => item.id}
-          data={SAMPLE_DATA}
-          renderItem={({ item }) => (
-            <Listitem
-              name={item.name}
-              symbol={item.symbol}
-              currentPrice={item.current_price}
-              priceChangePercentage7d={
-                item.price_change_percentage_7d_in_currency
-              }
-              logoUrl={item.image}
-              onPress={() => openModal(item)}
-            />
-          )}
-        />
+          <FlatList
+            keyExtractor={(item) => item.id}
+            data={data}
+            renderItem={({ item }) => (
+              <Listitem
+                name={item.name}
+                symbol={item.symbol}
+                currentPrice={item.current_price}
+                priceChangePercentage7d={
+                  item.price_change_percentage_7d_in_currency
+                }
+                logoUrl={item.image}
+                onPress={() => openModal(item)}
+              />
+            )}
+          />
+        </ImageBackground>
       </SafeAreaView>
 
       <BottomSheetModal
@@ -80,7 +109,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "tan",
+  },
+  imageBack: {
+    flex: 1,
+
+    justifyContent: "center",
   },
   largeTitle: {
     fontSize: 24,
@@ -89,6 +123,9 @@ const styles = StyleSheet.create({
   titleWrapper: {
     marginTop: 60,
     paddingHorizontal: 17,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   divder: {
     height: StyleSheet.hairlineWidth,

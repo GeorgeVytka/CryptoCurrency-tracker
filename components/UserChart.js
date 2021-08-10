@@ -22,7 +22,7 @@ import { getMarketData } from "./api/geckoApi";
 import svg from "./assets/image/Abstract-Timekeeper.svg";
 import { NavigationContainer } from "@react-navigation/native";
 
-export default function App() {
+export default function UserChart() {
   //data from the api
   const [data, setData] = useState([]);
 
@@ -147,3 +147,5 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 });
+
+export default UserChart;

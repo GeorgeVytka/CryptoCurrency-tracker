@@ -21,6 +21,10 @@ import {
 import { getMarketData } from "./api/geckoApi";
 import svg from "./assets/image/Abstract-Timekeeper.svg";
 import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import UserChar from "./components/UserChart";
+import UserPickedChart from "./components/UserPickedChart";
+import { createSwitchNavigator } from "react-navigation";
 
 export default function App() {
   //data from the api
@@ -44,67 +48,14 @@ export default function App() {
     setSelectedCoin(item);
     bottomSheetModalRef.current.present();
   };
+  const Stack = createStackNavigator();
 
   return (
     <NavigationContainer>
-      <BottomSheetModalProvider>
-        <SafeAreaView style={styles.container}>
-          <ImageBackground
-            source={svg}
-            resizeMode="cover"
-            style={styles.imageBack}
-          >
-            <View style={styles.titleWrapper}>
-              <Text style={styles.largeTitle}>Crypto Markets</Text>
-              <Button title={"+"}></Button>
-            </View>
-
-            <View style={styles.divder}></View>
-
-            {/* List the crypto */}
-
-            <FlatList
-              keyExtractor={(item) => item.id}
-              data={data}
-              renderItem={({ item }) => (
-                <Listitem
-                  name={item.name}
-                  symbol={item.symbol}
-                  currentPrice={item.current_price}
-                  priceChangePercentage7d={
-                    item.price_change_percentage_7d_in_currency
-                  }
-                  logoUrl={item.image}
-                  onPress={() => openModal(item)}
-                />
-              )}
-            />
-          </ImageBackground>
-        </SafeAreaView>
-
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={0}
-          snapPoints={snapPoints}
-          style={styles.bottomSheet}
-        >
-          {
-            //if selectedCoin is not null pass data
-            selctedCoin ? (
-              <Chart
-                currentPrice={selctedCoin.current_price}
-                logoUrl={selctedCoin.image}
-                name={selctedCoin.name}
-                priceChangePercentage7d={
-                  selctedCoin.price_change_percentage_7d_in_currency
-                }
-                symbol={selctedCoin.symbol}
-                sparkline={selctedCoin.sparkline_in_7d.price}
-              />
-            ) : null
-          }
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={UserChar} />
+        <Stack.Screen name="UserChart" component={UserPickedChart} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

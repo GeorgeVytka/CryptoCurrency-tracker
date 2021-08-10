@@ -10,19 +10,19 @@ import {
   Button,
 } from "react-native";
 import "react-native-gesture-handler";
-import Listitem from "./components/Listitem";
-import { SAMPLE_DATA } from "./assets/data/sampleData";
-import ListItem from "./components/Listitem";
-import Chart from "./components/Charts";
+import Listitem from "./Listitem";
+//import { SAMPLE_DATA } from "./assets/data/sampleData";
+//import ListItem from "./components/Listitem";
+import Chart from "./Charts";
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { getMarketData } from "./api/geckoApi";
-import svg from "./assets/image/Abstract-Timekeeper.svg";
+import { getMarketData } from "../api/geckoApi";
+import svg from "../assets/image/Abstract-Timekeeper.svg";
 import { NavigationContainer } from "@react-navigation/native";
 
-export default function UserChart() {
+export default function UserChart({ navigation }) {
   //data from the api
   const [data, setData] = useState([]);
 
@@ -46,66 +46,67 @@ export default function UserChart() {
   };
 
   return (
-    <NavigationContainer>
-      <BottomSheetModalProvider>
-        <SafeAreaView style={styles.container}>
-          <ImageBackground
-            source={svg}
-            resizeMode="cover"
-            style={styles.imageBack}
-          >
-            <View style={styles.titleWrapper}>
-              <Text style={styles.largeTitle}>Crypto Markets</Text>
-              <Button title={"+"}></Button>
-            </View>
-
-            <View style={styles.divder}></View>
-
-            {/* List the crypto */}
-
-            <FlatList
-              keyExtractor={(item) => item.id}
-              data={data}
-              renderItem={({ item }) => (
-                <Listitem
-                  name={item.name}
-                  symbol={item.symbol}
-                  currentPrice={item.current_price}
-                  priceChangePercentage7d={
-                    item.price_change_percentage_7d_in_currency
-                  }
-                  logoUrl={item.image}
-                  onPress={() => openModal(item)}
-                />
-              )}
-            />
-          </ImageBackground>
-        </SafeAreaView>
-
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={0}
-          snapPoints={snapPoints}
-          style={styles.bottomSheet}
+    <BottomSheetModalProvider>
+      <SafeAreaView style={styles.container}>
+        <ImageBackground
+          source={svg}
+          resizeMode="cover"
+          style={styles.imageBack}
         >
-          {
-            //if selectedCoin is not null pass data
-            selctedCoin ? (
-              <Chart
-                currentPrice={selctedCoin.current_price}
-                logoUrl={selctedCoin.image}
-                name={selctedCoin.name}
+          <View style={styles.titleWrapper}>
+            <Text style={styles.largeTitle}>Crypto Markets</Text>
+            <Button
+              title={"+"}
+              onPress={() => navigation.navigate("UserChart")}
+            />
+          </View>
+
+          <View style={styles.divder}></View>
+
+          {/* List the crypto */}
+
+          <FlatList
+            keyExtractor={(item) => item.id}
+            data={data}
+            renderItem={({ item }) => (
+              <Listitem
+                name={item.name}
+                symbol={item.symbol}
+                currentPrice={item.current_price}
                 priceChangePercentage7d={
-                  selctedCoin.price_change_percentage_7d_in_currency
+                  item.price_change_percentage_7d_in_currency
                 }
-                symbol={selctedCoin.symbol}
-                sparkline={selctedCoin.sparkline_in_7d.price}
+                logoUrl={item.image}
+                onPress={() => openModal(item)}
               />
-            ) : null
-          }
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
-    </NavigationContainer>
+            )}
+          />
+        </ImageBackground>
+      </SafeAreaView>
+
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={snapPoints}
+        style={styles.bottomSheet}
+      >
+        {
+          //if selectedCoin is not null pass data
+          selctedCoin ? (
+            <Chart
+              currentPrice={selctedCoin.current_price}
+              logoUrl={selctedCoin.image}
+              name={selctedCoin.name}
+              priceChangePercentage7d={
+                selctedCoin.price_change_percentage_7d_in_currency
+              }
+              symbol={selctedCoin.symbol}
+              sparkline={selctedCoin.sparkline_in_7d.price}
+            />
+          ) : null
+        }
+      </BottomSheetModal>
+    </BottomSheetModalProvider>
   );
 }
 
@@ -147,5 +148,3 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 });
-
-export default UserChart;
